@@ -30,6 +30,9 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,15 +49,20 @@ public class MainActivity extends Activity {
     private ImageButton mPhotoPickerButton;
     private EditText mMessageEditText;
     private Button mSendButton;
-
     private String mUsername;
+    private FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference mDatabaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mUsername = ANONYMOUS;
+        mUsername = "Arfeee";
+
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+
+        mDatabaseReference = mFirebaseDatabase.getReference().child("message");
 
         // Initialize references to views
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
@@ -107,6 +115,18 @@ public class MainActivity extends Activity {
                 // TODO: Send messages on click
 
                 // Clear input box
+                mMessageEditText.setText("");
+            }
+        });
+
+        mSendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TODO: Send messages on click
+
+                FriendlyMessage friendlyMessage = new FriendlyMessage(mMessageEditText.getText().toString(), mUsername, null);
+                mDatabaseReference.push().setValue(friendlyMessage);
+                //Clear input box
                 mMessageEditText.setText("");
             }
         });
